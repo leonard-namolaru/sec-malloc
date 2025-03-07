@@ -1,4 +1,4 @@
-# SecMalloc : Allocateur de mémoire sécurisé
+### SecMalloc : Allocateur de mémoire sécurisé
 ![sec-malloc.png](sec-malloc.png)
 > :school: **Lieu de formation :** École 2600 - École de Cybersécurité
 > 
@@ -11,10 +11,10 @@
 > :chart_with_upwards_trend: **Note :** 20/20
 
 
-### Description
+#### Description
 Ce projet porte sur la réécriture des fonctions `malloc()`, `calloc()`, `realloc()` et `free()` sous un axe de sécurité, étant donné que même si beaucoup de correction ont été apporté aux implémentations standard de `malloc()`, la gestion du tas reste encore un vecteur d’attaque puissant.
 
-### Fonctionnalités implémentées
+#### Fonctionnalités implémentées
 - Le comportement des fonctions réécrites (`my_malloc()`, `my_calloc()`, `my_realloc()` et `my_free()`) est le même que celui des fonctions correspondantes décrites dans `man 3 malloc`.
 - L'implémentation se fait à travers 2 pools distincts : un pool de data et un pool de meta-information.
 - Ajout d'un canari à la fin de chaque bloc mémoire afin de détecter un overflow.
@@ -24,9 +24,9 @@ Ce projet porte sur la réécriture des fonctions `malloc()`, `calloc()`, `reall
 - Détection de double free.
 - Possibilité de générer un rapport d'exécution dans un fichier dont le chemin est fourni par l'utilisateur à l'aide de la variable d'environnement `MSM_OUPUT`.
 
-### Explications concernant l'implémentation
+#### Explications concernant l'implémentation
 
-#### Allocation, redimensionnement et libération de mémoire
+**Allocation, redimensionnement et libération de mémoire**
 - L'allocation de mémoire avec `my_malloc()` se fait en utilisant l'approche _first fit_ tout en divisant le bloc de mémoire de la manière la plus optimale si la taille du bloc est supérieure à la taille de l'allocation demandée.
 	- Si la taille restante dans le bloc est supérieure à la taille de `struct_canary` : division en 2 blocs.
 	- Si la taille restante est inférieure ou égale à la taille de `struct_canary`, et si ce bloc est le dernier bloc du pool de data, une expansion du pool de data est effectuée afin que la taille restante puisse être utilisée pour une allocation future.
@@ -44,7 +44,8 @@ Ce projet porte sur la réécriture des fonctions `malloc()`, `calloc()`, `reall
 
 - Fusion de blocs vides consécutifs après chaque libération d'un bloc mémoire avec `my_free()`.
 
-#### Gestion des métadonnées
+**Gestion des métadonnées**
+
 Le pool de meta-information contient `meta_information_pool_size / sizeof(struct meta_information)` blocs consécutifs de la structure de données `struct meta_information`.
 Ce pool pourrait donc être géré comme un tableau, mais une telle gestion nous limiterait, car nous souhaitons que l'ordre des blocs des métadonnées soit le même que l'ordre des blocs dans le pool data. Par conséquent, il faut tenir compte, par exemple, du fait que les blocs de données du pool data peuvent être divisés, auquel cas il est nécessaire d'ajouter un bloc de métadonnées supplémentaire, éventuellement entre deux blocs de métadonnées existants. Le moyen le plus évident de modifier facilement l'ordre des blocs est d'utiliser une liste chaînée, et c'est ainsi que le pool de meta-information est géré.
 
@@ -68,7 +69,8 @@ L'argument le plus important dans le cas de ces 2 fonctions est `int (*func) (st
 
 La fonction `func` renvoie une valeur booléenne, 0 ou 1, et si `int return_if_func_true` n'est pas égal à zéro, les fonctions `metadata_array_map` et `metadata_linked_list_map` arrêteront le parcous après le premier appel à `func` qui renvoie une valeur non nulle. Dans un tel cas, la valeur qui sera renvoyée à la fonction appelante est un pointeur vers l'élément de métadonnées sur lequel l'appel de `func` a renvoyé une valeur non nulle.
 
-#### Synchronisation des threads
+**Synchronisation des threads**
+
 L'un des principaux avantages de l'utilisation des fonctions `metadata_linked_list_map` et `metadata_array_map` est que cela concentre les principales opérations de synchronisation en un seul endroit.
 
 Dans le cas de `metadata_linked_list_map`, il s'agit de synchronisation à grain fin ( _fine-grained synchronization_ ). De cette façon, chaque élément du  pool de meta-information possède son propre verrou, et le parcours de la liste chaînée est effectué en prenant les verrous les uns après les autres, puis en les relâchant, au fur et à mesure que nous progressons vers les éléments suivants de la liste. La synchronisation à grain fin est la forme de synchronisation utilisée également par les fonctions `my_realloc()` et `merge_if_free()`. Cela permet un véritable parallélisme entre les threads, puisque de cette manière toute la liste chaînée n'est pas verrouillée à chaque fois qu'il est nécessaire d'effectuer une opération sur l'un des éléments, et ainsi plusieurs threads peuvent travailler simultanément sur différents éléments de la liste chaînée.
@@ -81,10 +83,10 @@ Un autre point est que les fonctions `metadata_linked_list_map` et `metadata_arr
 
 De plus, l'initialisation des zones mémoire (le pool de meta-information et le pool de data) s'effectue à l'aide de la fonction `pthread_once()`.
 
-### Utilisation
+#### Utilisation
 Les commandes suivantes ont été testées sous Ubuntu 22.04.
 
-#### Mise en place de la bibliothèque Criterion
+**Mise en place de la bibliothèque Criterion**
 ```
 cd /usr/local/include/criterion/
 sudo apt install meson ninja-build cmake pkg-config libffi-dev libgit2-dev
@@ -101,31 +103,31 @@ cd lib
 ln -s /usr/local/include/criterion/
 ```
 
-#### Exécution avec création d'un rapport d'exécution
+**Exécution avec création d'un rapport d'exécution**
 ```
 export MSM_OUPUT=logs.txt
 ```
 
-#### Exécution des tests
+**Exécution des tests**
 ```
 make clean test
 ```
 
-### Utilisation de SecMalloc pour les allocations de mémoire effectuées par d'autres programmes
+**Utilisation de SecMalloc pour les allocations de mémoire effectuées par d'autres programmes**
 
-__Compilation d'une bibliothèque dynamique__
+Compilation d'une bibliothèque dynamique
 
 ```
 make clean dynamic
 ```
 
-__Test avec ls__
+Test avec ls
 
 ```
 LD_PRELOAD=~/Documents/ecole2600/A1/A1S2/Cycle3/TEC-OSC/my_secmalloc/libmy_secmalloc.so ls
 ```
 
-__Test avec Chromium__
+Test avec Chromium
 
 Installation sur Ubuntu avec `sudo apt-get install chromium-browser`
 
@@ -133,7 +135,7 @@ Installation sur Ubuntu avec `sudo apt-get install chromium-browser`
 LD_PRELOAD=~/Documents/ecole2600/A1/A1S2/Cycle3/TEC-OSC/my_secmalloc/libmy_secmalloc.so chromium
 ```
 
-__Test avec Firefox__
+Test avec Firefox
 
 Installé par défaut sur Ubuntu
 
@@ -141,7 +143,7 @@ Installé par défaut sur Ubuntu
 LD_PRELOAD=~/Documents/ecole2600/A1/A1S2/Cycle3/TEC-OSC/my_secmalloc/libmy_secmalloc.so firefox
 ```
 
-__Test avec Google Chrome__
+Test avec Google Chrome
 
 Installation sur Ubuntu :
 - `wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb`
