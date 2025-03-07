@@ -1,5 +1,4 @@
 ### SecMalloc : Allocateur de mémoire sécurisé
-![sec-malloc.png](sec-malloc.png)
 > :school: **Lieu de formation :** École 2600 - École de Cybersécurité
 > 
 > :books: **UE :** OS et prog. en C - S2
@@ -115,19 +114,19 @@ make clean test
 
 **Utilisation de SecMalloc pour les allocations de mémoire effectuées par d'autres programmes**
 
-Compilation d'une bibliothèque dynamique
+**Compilation d'une bibliothèque dynamique**
 
 ```
 make clean dynamic
 ```
 
-Test avec ls
+**Test avec ls**
 
 ```
 LD_PRELOAD=~/Documents/ecole2600/A1/A1S2/Cycle3/TEC-OSC/my_secmalloc/libmy_secmalloc.so ls
 ```
 
-Test avec Chromium
+**Test avec Chromium**
 
 Installation sur Ubuntu avec `sudo apt-get install chromium-browser`
 
@@ -135,7 +134,7 @@ Installation sur Ubuntu avec `sudo apt-get install chromium-browser`
 LD_PRELOAD=~/Documents/ecole2600/A1/A1S2/Cycle3/TEC-OSC/my_secmalloc/libmy_secmalloc.so chromium
 ```
 
-Test avec Firefox
+**Test avec Firefox**
 
 Installé par défaut sur Ubuntu
 
@@ -143,7 +142,7 @@ Installé par défaut sur Ubuntu
 LD_PRELOAD=~/Documents/ecole2600/A1/A1S2/Cycle3/TEC-OSC/my_secmalloc/libmy_secmalloc.so firefox
 ```
 
-Test avec Google Chrome
+**Test avec Google Chrome**
 
 Installation sur Ubuntu :
 - `wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb`
