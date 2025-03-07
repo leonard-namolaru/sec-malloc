@@ -1,0 +1,12 @@
+*.o
+test/test
+
+*.a
+*.so
+
+.cproject
+.project
+.settings/
+heap_overflow
+lib/*
+logs.txt
