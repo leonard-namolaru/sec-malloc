@@ -1,4 +1,16 @@
 # SecMalloc : Allocateur de mémoire sécurisé
+> :school: **Lieu de formation :** École 2600 - École de Cybersécurité
+> 
+> :books: **UE :** OS et prog. en C - S2
+> 
+> :pushpin: **Année scolaire :** Première année de la formation (niveau Bac + 3)
+> 
+> :calendar: **Date :** Mai - Juin 2024
+> 
+> :chart_with_upwards_trend: **Note :** 20/20
+
+
+### Description
 Ce projet porte sur la réécriture des fonctions `malloc()`, `calloc()`, `realloc()` et `free()` sous un axe de sécurité, étant donné que même si beaucoup de correction ont été apporté aux implémentations standard de `malloc()`, la gestion du tas reste encore un vecteur d’attaque puissant.
 
 ### Fonctionnalités implémentées
