@@ -1,4 +1,5 @@
 # SecMalloc : Allocateur de mémoire sécurisé
+![sec-malloc.png](sec-malloc.png)
 > :school: **Lieu de formation :** École 2600 - École de Cybersécurité
 > 
 > :books: **UE :** OS et prog. en C - S2
